@@ -1,0 +1,49 @@
+{
+    "version": "24.09",
+    "description": "A multi-format file archiver with high compression ratios",
+    "homepage": "https://www.7-zip.org/",
+    "license": "LGPL-2.1-or-later",
+    "architecture": {
+        "64bit": {
+            "url": "https://www.7-zip.org/a/7z2409-x64.exe",
+            "hash": "需要替换为实际hash值"
+        },
+        "32bit": {
+            "url": "https://www.7-zip.org/a/7z2409.exe",
+            "hash": "需要替换为实际hash值"
+        }
+    },
+    "installer": {
+        "script": [
+            "$installerPath = \"$dir\\$fname\"",
+            "Start-Process -FilePath $installerPath -ArgumentList @('/S', \"/D=$dir\") -Wait -NoNewWindow",
+            "Remove-Item $installerPath -Force -ErrorAction SilentlyContinue"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "$uninstaller = \"$dir\\Uninstall.exe\"",
+            "if (Test-Path $uninstaller) {",
+            "    Start-Process -FilePath $uninstaller -ArgumentList '/S' -Wait -NoNewWindow",
+            "}"
+        ]
+    },
+    "bin": "7z.exe",
+    "shortcuts": [
+        ["7zFM.exe", "7-Zip"]
+    ],
+    "checkver": {
+        "url": "https://www.7-zip.org/download.html",
+        "regex": "Download 7-Zip ([\\d.]+)"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://www.7-zip.org/a/7z$cleanVersion-x64.exe"
+            },
+            "32bit": {
+                "url": "https://www.7-zip.org/a/7z$cleanVersion.exe"
+            }
+        }
+    }
+}
