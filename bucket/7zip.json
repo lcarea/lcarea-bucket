@@ -6,22 +6,20 @@
     "architecture": {
         "64bit": {
             "url": "https://www.7-zip.org/a/7z2409-x64.exe",
-            "hash": ""
+            "hash": "bdd1a33de78618d16ee4ce148b849932c05d0015491c34887846d431d29f308e"
         },
         "32bit": {
             "url": "https://www.7-zip.org/a/7z2409.exe",
-            "hash": ""
+            "hash": "sha256:hash_value_for_32bit"
         },
         "arm64": {
             "url": "https://www.7-zip.org/a/7z2409-arm64.exe",
-            "hash": ""
+            "hash": "sha256:hash_value_for_arm64"
         }
     },
     "pre_install": [
         "$7zr = Join-Path $env:TMP '7zr.exe'",
-        "if (-not (Test-Path $7zr)) {",
-        "    Invoke-WebRequest https://www.7-zip.org/a/7zr.exe -OutFile $7zr",
-        "}",
+        "if (-not (Test-Path $7zr)) { Invoke-WebRequest https://www.7-zip.org/a/7zr.exe -OutFile $7zr }",
         "Invoke-ExternalCommand $7zr @('x', \"$dir\\$fname\", \"-o$dir\", '-y') | Out-Null",
         "Remove-Item \"$dir\\Uninstall.exe\", \"$dir\\$fname\" -ErrorAction SilentlyContinue"
     ],
