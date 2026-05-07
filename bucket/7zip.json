@@ -1,11 +1,8 @@
 {
     "version": "24.09",
-    "description": "A multi-format file archiver with high compression ratios.",
+    "description": "A multi-format file archiver with high compression ratios",
     "homepage": "https://www.7-zip.org",
-    "license": {
-        "identifier": "BSD-2-Clause, BSD-3-Clause, LGPL-2.1-or-later",
-        "url": "https://www.7-zip.org/license.txt"
-    },
+    "license": "LGPL-2.1-or-later",
     "architecture": {
         "64bit": {
             "url": "https://www.7-zip.org/a/7z2409-x64.exe",
@@ -20,18 +17,18 @@
             "hash": ""
         }
     },
-    "installer": {
-        "script": [
-            "$7zr = Join-Path $env:TMP '7zr.exe'",
-            "Invoke-WebRequest https://www.7-zip.org/a/7zr.exe -OutFile $7zr",
-            "Invoke-ExternalCommand $7zr @('x', \"$dir\\$fname\", \"-o$dir\", '-y') | Out-Null",
-            "Remove-Item \"$dir\\Uninstall.exe\", \"$dir\\$fname\", $7zr -ErrorAction SilentlyContinue"
-        ]
-    },
+    "pre_install": [
+        "$7zr = Join-Path $env:TMP '7zr.exe'",
+        "if (-not (Test-Path $7zr)) {",
+        "    Invoke-WebRequest https://www.7-zip.org/a/7zr.exe -OutFile $7zr",
+        "}",
+        "Invoke-ExternalCommand $7zr @('x', \"$dir\\$fname\", \"-o$dir\", '-y') | Out-Null",
+        "Remove-Item \"$dir\\Uninstall.exe\", \"$dir\\$fname\" -ErrorAction SilentlyContinue"
+    ],
     "bin": [
         "7z.exe",
-        "7zG.exe",
-        "7zFM.exe"
+        "7zFM.exe",
+        "7zG.exe"
     ],
     "shortcuts": [
         [
