@@ -6,7 +6,7 @@
     "architecture": {
         "64bit": {
             "url": "https://www.7-zip.org/a/7z2409-x64.exe",
-            "hash": "需要替换为实际hash值"
+            "hash": "bdd1a33de78618d16ee4ce148b849932c05d0015491c34887846d431d29f308e"
         },
         "32bit": {
             "url": "https://www.7-zip.org/a/7z2409.exe",
