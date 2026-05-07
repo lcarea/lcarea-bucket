@@ -1,0 +1,54 @@
+{
+    "version": "5.0.50.12151",
+    "description": "联想电脑管家 - 联想官方系统优化和管理工具",
+    "homepage": "https://guanjia.lenovo.com.cn/",
+    "license": "Freeware",
+    "url": "https://guanjia-fast.lenovo.com.cn/download/lenovopcmanager_apps.exe",
+    "hash": "0791aa2c229be81739527f356291a0d6b2bbcc6eab6d2cc928eefcbdfdbb6679",
+    "installer": {
+        "script": [
+            "$ErrorActionPreference = 'Continue'",
+            "Write-Host '使用 7zip 解压安装包...' -ForegroundColor Cyan",
+            "",
+            "$exePath = Join-Path $dir $fname",
+            "$7z = Get-Command 7z -ErrorAction Stop",
+            "",
+            "Write-Host '正在解压文件...' -ForegroundColor Yellow",
+            "& $7z x \"-o$dir\" \"$exePath\" -y | Out-Null",
+            "",
+            "Remove-Item $exePath -Force -ErrorAction SilentlyContinue",
+            "",
+            "Write-Host '查找可执行文件...' -ForegroundColor Yellow",
+            "$exes = Get-ChildItem $dir -Recurse -Filter '*.exe' -ErrorAction SilentlyContinue | Where-Object { $_.Name -notlike 'unins*' -and $_.Name -notlike '*.tmp.exe' }",
+            "",
+            "if ($exes) {",
+            "    Write-Host \"找到 $($exes.Count) 个可执行文件:\" -ForegroundColor Green",
+            "    $exes | Sort-Object Length -Descending | ForEach-Object {",
+            "        $size = [math]::Round($_.Length / 1MB, 2)",
+            "        Write-Host \"  [$size MB] $($_.Name)\" -ForegroundColor Gray",
+            "    }",
+            "} else {",
+            "    Write-Host '未找到可执行文件' -ForegroundColor Red",
+            "}",
+            "",
+            "$totalFiles = (Get-ChildItem $dir -Recurse -File).Count",
+            "Write-Host \"总计提取 $totalFiles 个文件\" -ForegroundColor Green"
+        ]
+    },
+    "uninstaller": {
+        "script": [
+            "$uninst = Get-ChildItem $dir -Recurse -Filter 'unins*.exe' -ErrorAction SilentlyContinue | Select-Object -First 1",
+            "if ($uninst) {",
+            "    Write-Host \"运行卸载程序: $($uninst.Name)\" -ForegroundColor Yellow",
+            "    Start-Process -FilePath $uninst.FullName -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART' -Wait -WindowStyle Hidden",
+            "}"
+        ]
+    },
+    "checkver": {
+        "url": "https://guanjia.lenovo.com.cn/",
+        "regex": "版本号[：:]\\s*([\\d.]+)"
+    },
+    "autoupdate": {
+        "url": "https://guanjia-fast.lenovo.com.cn/download/lenovopcmanager_apps.exe"
+    }
+}
