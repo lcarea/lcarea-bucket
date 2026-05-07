@@ -8,39 +8,28 @@
     "installer": {
         "script": [
             "$ErrorActionPreference = 'Continue'",
-            "Write-Host '使用 7zip 解压安装包...' -ForegroundColor Cyan",
-            "",
-            "$exePath = Join-Path $dir $fname",
-            "$7z = Get-Command 7z -ErrorAction Stop",
-            "",
-            "Write-Host '正在解压文件...' -ForegroundColor Yellow",
-            "& $7z x \"-o$dir\" \"$exePath\" -y | Out-Null",
-            "",
-            "Remove-Item $exePath -Force -ErrorAction SilentlyContinue",
-            "",
-            "Write-Host '查找可执行文件...' -ForegroundColor Yellow",
-            "$exes = Get-ChildItem $dir -Recurse -Filter '*.exe' -ErrorAction SilentlyContinue | Where-Object { $_.Name -notlike 'unins*' -and $_.Name -notlike '*.tmp.exe' }",
-            "",
+            "Expand-7zipArchive \"$dir\\$fname\" \"$dir\" -Removal",
+            "$exes = Get-ChildItem \"$dir\" -Recurse -Filter '*.exe' | Where-Object { $_.Name -notlike 'unins*' }",
             "if ($exes) {",
-            "    Write-Host \"找到 $($exes.Count) 个可执行文件:\" -ForegroundColor Green",
-            "    $exes | Sort-Object Length -Descending | ForEach-Object {",
-            "        $size = [math]::Round($_.Length / 1MB, 2)",
-            "        Write-Host \"  [$size MB] $($_.Name)\" -ForegroundColor Gray",
+            "    $mainExe = $exes | Where-Object { $_.Name -match 'Lenovo.*Manager|LenovoPC|PCManager' -and $_.Length -gt 1MB } | Sort-Object Length -Descending | Select-Object -First 1",
+            "    if (!$mainExe) { $mainExe = $exes | Sort-Object Length -Descending | Select-Object -First 1 }",
+            "    if ($mainExe) {",
+            "        Write-Host \"主程序: $($mainExe.Name)\" -ForegroundColor Green",
             "    }",
-            "} else {",
-            "    Write-Host '未找到可执行文件' -ForegroundColor Red",
-            "}",
-            "",
-            "$totalFiles = (Get-ChildItem $dir -Recurse -File).Count",
-            "Write-Host \"总计提取 $totalFiles 个文件\" -ForegroundColor Green"
+            "}"
         ]
     },
+    "shortcuts": [
+        [
+            "LenovoPCManager.exe",
+            "联想电脑管家"
+        ]
+    ],
     "uninstaller": {
         "script": [
-            "$uninst = Get-ChildItem $dir -Recurse -Filter 'unins*.exe' -ErrorAction SilentlyContinue | Select-Object -First 1",
+            "$uninst = Get-ChildItem \"$dir\" -Recurse -Filter 'unins*.exe' | Select-Object -First 1",
             "if ($uninst) {",
-            "    Write-Host \"运行卸载程序: $($uninst.Name)\" -ForegroundColor Yellow",
-            "    Start-Process -FilePath $uninst.FullName -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART' -Wait -WindowStyle Hidden",
+            "    Start-Process -FilePath $uninst.FullName -ArgumentList '/VERYSILENT','/SUPPRESSMSGBOXES','/NORESTART' -Wait -NoNewWindow",
             "}"
         ]
     },
