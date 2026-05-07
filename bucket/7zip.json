@@ -1,37 +1,62 @@
 {
     "version": "24.09",
-    "description": "A multi-format file archiver with high compression ratios",
-    "homepage": "https://www.7-zip.org/",
-    "license": "LGPL-2.1-or-later",
+    "description": "A multi-format file archiver with high compression ratios.",
+    "homepage": "https://www.7-zip.org",
+    "license": {
+        "identifier": "BSD-2-Clause, BSD-3-Clause, LGPL-2.1-or-later",
+        "url": "https://www.7-zip.org/license.txt"
+    },
+    "notes": [
+        "To register the context menu entry, please execute the following command:",
+        "reg import \"$dir\\install-context.reg\"",
+        "",
+        "If an error occurs while attempting to delete files during uninstallation, run the following command and then retry:",
+        "Stop-Process -Name 'explorer'"
+    ],
     "architecture": {
         "64bit": {
             "url": "https://www.7-zip.org/a/7z2409-x64.exe",
-            "hash": "bdd1a33de78618d16ee4ce148b849932c05d0015491c34887846d431d29f308e"
+            "hash": ""
         },
         "32bit": {
             "url": "https://www.7-zip.org/a/7z2409.exe",
-            "hash": "需要替换为实际hash值"
+            "hash": ""
+        },
+        "arm64": {
+            "url": "https://www.7-zip.org/a/7z2409-arm64.exe",
+            "hash": ""
         }
     },
-    "installer": {
-        "script": [
-            "$installerPath = \"$dir\\$fname\"",
-            "Start-Process -FilePath $installerPath -ArgumentList @('/S', \"/D=$dir\") -Wait -NoNewWindow",
-            "Remove-Item $installerPath -Force -ErrorAction SilentlyContinue"
-        ]
-    },
-    "uninstaller": {
-        "script": [
-            "$uninstaller = \"$dir\\Uninstall.exe\"",
-            "if (Test-Path $uninstaller) {",
-            "    Start-Process -FilePath $uninstaller -ArgumentList '/S' -Wait -NoNewWindow",
-            "}"
-        ]
-    },
-    "bin": "7z.exe",
-    "shortcuts": [
-        ["7zFM.exe", "7-Zip"]
+    "post_install": [
+        "$7zip_dir = $dir -replace '\\\\', '\\\\'",
+        "Get-ChildItem -Path \"$bucketsdir\\$bucket\\scripts\\7-zip\" -Filter '*.reg' -File | ForEach-Object {",
+        "    $content = Get-Content -Path $_.FullName -Encoding utf8",
+        "    if ($global) { $content = $content -replace 'HKEY_CURRENT_USER(?=.+Classes)', 'HKEY_LOCAL_MACHINE' }",
+        "    $content -replace '{{7zip_dir}}', $7zip_dir | Set-Content -Path \"$dir\\$($_.Name)\" -Encoding unicode",
+        "}"
     ],
+    "bin": [
+        "7z.exe",
+        "7zG.exe",
+        "7zFM.exe"
+    ],
+    "shortcuts": [
+        [
+            "7zFM.exe",
+            "7-Zip\\7-Zip File Manager"
+        ],
+        [
+            "7-zip.chm",
+            "7-Zip\\7-Zip Help"
+        ]
+    ],
+    "persist": [
+        "Codecs",
+        "Formats"
+    ],
+    "uninstaller": {
+        "script": "if ($cmd -eq 'uninstall') { reg import \"$dir\\uninstall-context.reg\" *> $null }"
+    },
     "checkver": {
         "url": "https://www.7-zip.org/download.html",
         "regex": "Download 7-Zip ([\\d.]+)"
@@ -43,6 +68,9 @@
             },
             "32bit": {
                 "url": "https://www.7-zip.org/a/7z$cleanVersion.exe"
+            },
+            "arm64": {
+                "url": "https://www.7-zip.org/a/7z$cleanVersion-arm64.exe"
             }
         }
     }
