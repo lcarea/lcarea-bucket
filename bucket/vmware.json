@@ -1,0 +1,43 @@
+{
+    "version": "25H2u1-25219725",
+    "description": "An application for creating and running virtual machines on your computer",
+    "homepage": "https://www.vmware.com/",
+    "license": "Freeware",
+    "notes": [
+        "VMware Workstation requires administrator privileges to install and uninstall.",
+        "A system restart may be required after installation or uninstallation."
+    ],
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/201853910/VMwareWorkstation/releases/download/25H2/VMware-Workstation-Full-25H2u1-25219725.exe",
+            "hash": ""
+        }
+    },
+    "pre_install": [
+        "if (!(is_admin)) { error \"$app requires admin rights to install\"; break }",
+        "Start-Process \"$dir\\$fname\" -Wait -Verb 'RunAs' -ArgumentList '/x' | Out-Null",
+        "$msiPath = Get-ChildItem \"$env:TEMP\" -Filter 'VMware*.msi' -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty FullName",
+        "if (!$msiPath) { error 'MSI extraction failed'; break }",
+        "Move-Item $msiPath \"$dir\\setup.msi\" -Force",
+        "Start-Process 'msiexec' -Wait -Verb 'RunAs' -ArgumentList @('/i', \"$dir\\setup.msi\", '/qn', '/norestart', 'REBOOT=ReallySuppress', 'EULAS_AGREED=1', 'ADDLOCAL=ALL')",
+        "Remove-Item \"$dir\\$fname\" -Force -ErrorAction SilentlyContinue"
+    ],
+    "pre_uninstall": [
+        "if (!(is_admin)) { error \"$app requires admin rights to uninstall\"; break }",
+        "if (Test-Path \"$dir\\setup.msi\") {",
+        "    Start-Process 'msiexec' -Wait -Verb 'RunAs' -ArgumentList @('/x', \"$dir\\setup.msi\", '/qn', '/norestart', 'REBOOT=ReallySuppress')",
+        "    Write-Host 'Please restart your computer to complete uninstallation' -ForegroundColor Yellow",
+        "}"
+    ],
+    "checkver": {
+        "url": "https://api.github.com/repos/201853910/VMwareWorkstation/releases/latest",
+        "jsonpath": "$.tag_name"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/201853910/VMwareWorkstation/releases/download/$version/VMware-Workstation-Full-$version.exe"
+            }
+        }
+    }
+}
