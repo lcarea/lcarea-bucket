@@ -11,8 +11,10 @@
     },
     "installer": {
         "script": [
-            "Expand-Archive \"$dir\\GitHubDesktop-Windows-x64.exe\" \"$dir\" -Force 2>$null",
-            "if (!(Test-Path \"$dir\\GitHubDesktop.exe\")) { & \"$dir\\GitHubDesktop-Windows-x64.exe\" --silent --install-dir=\"$dir\" }"
+            "& \"$dir\\GitHubDesktop-Windows-x64.exe\" --silent --do-not-launch-app",
+            "Start-Sleep -Seconds 15",
+            "$src = Get-ChildItem \"$env:LOCALAPPDATA\\GitHubDesktop\" -Filter 'GitHubDesktop.exe' -Recurse | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName",
+            "if ($src) { Copy-Item $src \"$dir\\GitHubDesktop.exe\" -Force } else { throw 'GitHubDesktop.exe not found after install' }"
         ]
     },
     "bin": "GitHubDesktop.exe",
