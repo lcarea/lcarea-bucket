@@ -1,0 +1,36 @@
+{
+    "version": "3.5.8",
+    "description": "Extend your GitHub workflow beyond your browser.",
+    "homepage": "https://desktop.github.com/",
+    "license": "MIT",
+    "architecture": {
+        "64bit": {
+            "url": "https://github.com/zetaloop/desktop/releases/download/release-3.5.8/GitHubDesktop-Windows-x64.exe",
+            "hash": ""
+        }
+    },
+    "installer": {
+        "script": [
+            "Expand-Archive \"$dir\\GitHubDesktop-Windows-x64.exe\" \"$dir\" -Force 2>$null",
+            "if (!(Test-Path \"$dir\\GitHubDesktop.exe\")) { & \"$dir\\GitHubDesktop-Windows-x64.exe\" --silent --install-dir=\"$dir\" }"
+        ]
+    },
+    "bin": "GitHubDesktop.exe",
+    "shortcuts": [
+        [
+            "GitHubDesktop.exe",
+            "GitHub Desktop"
+        ]
+    ],
+    "checkver": {
+        "github": "https://api.github.com/repos/zetaloop/desktop/tags",
+        "regex": "tags/release-([\\d.]+)\""
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "https://github.com/zetaloop/desktop/releases/download/release-$version/GitHubDesktop-Windows-x64.exe"
+            }
+        }
+    }
+}
