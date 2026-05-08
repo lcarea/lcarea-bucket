@@ -555,133 +555,31 @@ catch {
 }
 
 # ==================================================
-# Step 12: 重装 7zip（使用本地 manifest 安装 v24.09）
+# Step 12: 重装 7zip（v24.09）
 # ==================================================
-Write-Host "`n[Step 12] 重装 7zip → v24.09 (本地 manifest)" -ForegroundColor Cyan
 
-# 静默卸载 7zip
+Write-Step "Step 12: 重装 7zip（v24.09）"
+
+Write-Host "添加 lcarea bucket..." -ForegroundColor Yellow
+scoop bucket add lcarea https://github.com/lcarea/lcarea-bucket 2>&1 | Out-Null
+
+Write-Host "卸载当前 7zip..." -ForegroundColor Yellow
+$prev = $ErrorActionPreference
 $ErrorActionPreference = 'SilentlyContinue'
-scoop uninstall 7zip *> $null
-$ErrorActionPreference = 'Stop'
+scoop uninstall 7zip 2>&1 | Out-Null
+$ErrorActionPreference = $prev
 
-# 验证卸载结果
-$still7zip = scoop list 2>$null | Select-String '^\s*7zip\s'
-if (-not $still7zip) {
-    Write-Host "✔ 7zip 卸载成功" -ForegroundColor Green
+Write-Host "安装 7zip v24.09..." -ForegroundColor Yellow
+scoop install lcarea/7zip
+
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "✔ 7zip 重装完成" -ForegroundColor Green
+    scoop info 7zip | Select-String "Version"
 } else {
-    Write-Host "[..] 7zip 可能未完全卸载，继续尝试安装..." -ForegroundColor Yellow
+    Write-Host "✘ 7zip 安装失败" -ForegroundColor Red
 }
 
-$downloadUrl= "https://www.7-zip.org/a/7z2409-x64.exe"
-$installerPath = Join-Path $env:TEMP "7z2409-x64.exe"
-$manifestPath  = Join-Path $env:TEMP "7zip.json"
 
-Write-Host "[..] 下载 7zip v24.09 安装包..." -ForegroundColor Yellow
-
-try {
-    # 下载安装包
-    Invoke-WebRequest -Uri $downloadUrl -OutFile $installerPath -UseBasicParsing
-
-    if (-not (Test-Path $installerPath)) { throw "下载失败，文件不存在" }
-
-    $fileSize = [math]::Round((Get-Item $installerPath).Length / 1MB, 2)
-    Write-Host "✔ 下载完成 ($fileSize MB)" -ForegroundColor Green
-
-    # 计算真实 hash
-    Write-Host "[..] 计算文件 hash..." -ForegroundColor Yellow
-    $actualHash = (Get-FileHash -Path $installerPath -Algorithm SHA256).Hash.ToLower()
-    Write-Host "✔ SHA256: $actualHash" -ForegroundColor Green
-
-    # 生成 manifest
-    $manifestContent = @"
-{
-    "version": "24.09",
-    "description": "7-Zip v24.09",
-    "homepage": "https://www.7-zip.org/",
-    "license": "LGPL-2.1-or-later",
-    "architecture": {
-        "64bit": {
-            "url": "https://www.7-zip.org/a/7z2409-x64.exe",
-            "hash": "sha256:$actualHash"
-        }
-    },
-    "installer": {
-        "script": [
-            "Start-Process -FilePath \"`$dir\\`$fname\" -ArgumentList '/S', \"/D=`$dir\" -Wait -NoNewWindow"
-        ]
-    },
-    "uninstaller": {
-        "script": [
-            "Start-Process -FilePath \"`$dir\\Uninstall.exe\" -ArgumentList '/S' -Wait -NoNewWindow -ErrorAction SilentlyContinue"
-        ]
-    },
-    "bin": "7z.exe",
-    "shortcuts": [
-        ["7zFM.exe", "7-Zip"]
-    ]
-}
-"@
-
-    # 验证 JSON 格式
-    $null = $manifestContent | ConvertFrom-Json
-    Write-Host "✔ JSON 格式验证通过" -ForegroundColor Green
-
-    $manifestContent | Out-File -FilePath $manifestPath -Encoding UTF8 -Force
-
-    Write-Host "[..] 使用本地 manifest 安装 7zip v24.09..." -ForegroundColor Yellow
-    scoop install $manifestPath
-    $exitCode = $LASTEXITCODE
-
-    if ($exitCode -eq 0) {
-        Write-Host "✔ 7zip v24.09 安装成功" -ForegroundColor Green
-
-        # -----------------------------------------------
-        # 修复：Start-Process -ArgumentList 必须用数组形式
-        # 不能在参数之间用反引号换行（会误当positional参数）
-        # -----------------------------------------------
-        $7zExe = Join-Path $env:SCOOP "apps\7zip\current\7z.exe"
-        if (Test-Path $7zExe) {
-            $verFile = Join-Path $env:TEMP "7z_ver.txt"
-
-            # 正确写法：所有参数写在同一行，或用splatting
-            $startParams = @{
-                FilePath               = $7zExe
-                ArgumentList           = @("i")
-                NoNewWindow            = $true
-                Wait                   = $true
-                RedirectStandardOutput = $verFile
-                ErrorAction            = "SilentlyContinue"
-            }
-            Start-Process @startParams
-
-            $verText = Get-Content $verFile -ErrorAction SilentlyContinue |Select-String '7-Zip' |
-                       Select-Object -First 1
-
-            Remove-Item $verFile -Force -ErrorAction SilentlyContinue
-
-            if ($verText) {
-                Write-Host "✔ 版本验证: $verText" -ForegroundColor Green
-            } else {
-                Write-Host "✔ 7z.exe 存在，安装完成" -ForegroundColor Green
-            }
-        } else {
-            Write-Host "[!] 7z.exe 未找到，请检查安装路径" -ForegroundColor Yellow
-        }
-    } else {
-        Write-Host "✘ 7zip v24.09 安装失败（退出码: $exitCode）" -ForegroundColor Red
-    }
-}
-catch {
-    Write-Host "✘ 安装过程异常: $_" -ForegroundColor Red
-}
-finally {
-    foreach ($f in @($installerPath, $manifestPath)) {
-        if ($f -and (Test-Path $f)) {
-            Remove-Item $f -Force -ErrorAction SilentlyContinue
-        }
-    }
-    Write-Host "[..] 临时文件已清理" -ForegroundColor DarkGray
-}
 
 # ==================================================
 # Step 13: 汇总报告
