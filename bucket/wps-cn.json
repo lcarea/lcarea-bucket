@@ -12,17 +12,16 @@
         }
     },
     "installer": {
-        "args": ["/S", "-agreelicense"]
+        "script": [
+            "& \"$dir\\WPS_Setup_25865.exe\" /S -agreelicense",
+            "Start-Sleep -Seconds 30",
+            "$office6 = Get-ChildItem \"$env:LocalAppData\\kingsoft\\WPS Office\" -Filter 'office6' -Recurse -Directory -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName",
+            "if (!$office6) { throw 'WPS office6 directory not found after installation' }",
+            "New-Item -ItemType Junction -Path \"$dir\\office6\" -Target $office6 -Force | Out-Null"
+        ]
     },
-    "post_install": [
-        "$wpsRoot = \"$env:LocalAppData\\kingsoft\\WPS Office\"",
-        "$office6 = Get-ChildItem $wpsRoot -Filter 'office6' -Recurse -Directory -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName",
-        "if (!$office6) { throw 'WPS office6 directory not found after installation' }",
-        "New-Item -ItemType Junction -Path \"$dir\\office6\" -Target $office6 -Force | Out-Null"
-    ],
     "pre_uninstall": [
-        "$wpsRoot = \"$env:LocalAppData\\kingsoft\\WPS Office\"",
-        "$uninst = Get-ChildItem $wpsRoot -Filter 'uninst.exe' -Recurse -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName",
+        "$uninst = Get-ChildItem \"$env:LocalAppData\\kingsoft\\WPS Office\" -Filter 'uninst.exe' -Recurse -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName",
         "if ($uninst) { Start-Process $uninst -ArgumentList '/S' -Wait }"
     ],
     "bin": [
