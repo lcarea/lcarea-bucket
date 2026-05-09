@@ -1,43 +1,51 @@
 {
     "version": "12.1.0.25865",
-    "description": "[WPS Office 中文版] - 协同办公软件",
-    "homepage": "https://www.wps.cn",
+    "description": "一站式办公服务平台 | Complete office suite with PDF editor",
+    "homepage": "https://www.wps.cn/",
     "license": {
-        "identifier": "Freeware",
-        "url": "https://www.wps.cn/privacy/useragreement"
+        "identifier": "Proprietary"
     },
-    "url": "https://official-package.wpscdn.cn/wps/download/WPS_Setup_25865.exe#/dl.7z",
-    "hash": "94ba7e304bb2b95b77023c7dc73808287b3771c83ba63c083f3e8a303a4d6cc5",
-    "pre_install": [
-        "Expand-7zipArchive \"$dir\\`$_11_\\`$EXEFILE\" -Switches '-t#'",
-        "Move-Item \"$dir\\`$_11_\\*.7z\" $dir",
-        "Remove-Item \"$dir\\*\" -Exclude '4.7z','2.7z' -Recurse",
-        "Expand-7zipArchive \"$dir\\4.7z\" -ExtractDir 'office6' -Removal",
-        "Expand-7zipArchive \"$dir\\2.7z\" -ExtractDir 'CONTROL\\office6' -Overwrite 'All' -Removal"
+    "architecture": {
+        "64bit": {
+            "url": "https://official-package.wpscdn.cn/wps/download/WPS_Setup_25865.exe",
+            "hash": "94ba7e304bb2b95b77023c7dc73808287b3771c83ba63c083f3e8a303a4d6cc5"
+        }
+    },
+    "installer": {
+        "args": ["/S", "-agreelicense"]
+    },
+    "post_install": [
+        "$wpsRoot = \"$env:LocalAppData\\kingsoft\\WPS Office\"",
+        "$office6 = Get-ChildItem $wpsRoot -Filter 'office6' -Recurse -Directory -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName",
+        "if (!$office6) { throw 'WPS office6 directory not found after installation' }",
+        "New-Item -ItemType Junction -Path \"$dir\\office6\" -Target $office6 -Force | Out-Null"
+    ],
+    "pre_uninstall": [
+        "$wpsRoot = \"$env:LocalAppData\\kingsoft\\WPS Office\"",
+        "$uninst = Get-ChildItem $wpsRoot -Filter 'uninst.exe' -Recurse -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName",
+        "if ($uninst) { Start-Process $uninst -ArgumentList '/S' -Wait }"
     ],
     "bin": [
-        [
-            "wpsoffice.exe",
-            "wpsofficecn"
-        ]
+        ["office6\\wps.exe", "wps"],
+        ["office6\\et.exe", "et"],
+        ["office6\\wpp.exe", "wpp"],
+        ["office6\\pdf.exe", "wpspdf"]
     ],
     "shortcuts": [
-        [
-            "wpsoffice.exe",
-            "WPS Office"
-        ]
+        ["office6\\wps.exe", "WPS Writer"],
+        ["office6\\et.exe", "WPS Spreadsheets"],
+        ["office6\\wpp.exe", "WPS Presentation"],
+        ["office6\\pdf.exe", "WPS PDF"]
     ],
     "checkver": {
-        "url": "https://www.wps.cn/platformUrls",
-        "jsonpath": "$.productDetail.productVcode"
+        "url": "https://official-package.wpscdn.cn/wps/download/",
+        "regex": "WPS_Setup_([\\d]+)\\.exe"
     },
     "autoupdate": {
-        "url": "https://official-package.wpscdn.cn/wps/download/WPS_Setup_$buildVersion.exe#/dl.7z"
-    },
-    "notes": [
-        "WPS 运行后，后台会常驻部分相关进程，卸载或更新失败时，先执行关闭进程操作：",
-        "",
-        "Get-Process *wps* | Stop-Process",
-        ""
-    ]
+        "architecture": {
+            "64bit": {
+                "url": "https://official-package.wpscdn.cn/wps/download/WPS_Setup_$version.exe"
+            }
+        }
+    }
 }
