@@ -13,17 +13,14 @@
     },
     "installer": {
         "script": [
-            "& \"$dir\\WPS_Setup_25865.exe\" /S -agreelicense",
-            "Start-Sleep -Seconds 30",
-            "$office6 = Get-ChildItem \"$env:LocalAppData\\kingsoft\\WPS Office\" -Filter 'office6' -Recurse -Directory -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName",
-            "if (!$office6) { throw 'WPS office6 directory not found after installation' }",
-            "New-Item -ItemType Junction -Path \"$dir\\office6\" -Target $office6 -Force | Out-Null"
+            "& \"$dir\\WPS_Setup_25865.exe\" /S -agreelicense \"/D=$dir\"",
+            "Start-Sleep -Seconds 30"
         ]
     },
-    "pre_uninstall": [
-        "$uninst = Get-ChildItem \"$env:LocalAppData\\kingsoft\\WPS Office\" -Filter 'uninst.exe' -Recurse -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName",
-        "if ($uninst) { Start-Process $uninst -ArgumentList '/S' -Wait }"
-    ],
+    "uninstaller": {
+        "file": "uninst.exe",
+        "args": ["/S"]
+    },
     "bin": [
         ["office6\\wps.exe", "wps"],
         ["office6\\et.exe", "et"],
