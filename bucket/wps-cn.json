@@ -13,12 +13,12 @@
     },
     "installer": {
         "script": [
-            "& \"$dir\\WPS_Setup_25865.exe\" /S -agreelicense \"/D=$dir\"",
-            "Start-Sleep -Seconds 30"
+            "Start-Process \"$dir\\WPS_Setup_25865.exe\" -ArgumentList '/S', '-agreelicense', \"/D=$dir\" -Wait",
+            "New-Item -ItemType Junction -Path \"$dir\\office6\" -Target \"$dir\\WPS Office\\office6\" -Force | Out-Null"
         ]
     },
     "uninstaller": {
-        "file": "uninst.exe",
+        "file": "WPS Office\\uninst.exe",
         "args": ["/S"]
     },
     "bin": [
