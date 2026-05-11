@@ -7,9 +7,39 @@
     },
     "architecture": {
         "64bit": {
-            "url": "https://d8.music.126.net/dmusic2/NeteaseCloudMusic_Music_official_3.1.32.205206_64.exe",
-            "hash": "8d29d0fedf994d3c379e53057230f357199d47fd12f7f42c0e6479ae8f6e38b4"
+            "url": "https://d8.music.126.net/dmusic2/NeteaseCloudMusic_Music_official_3.1.32.205206_64 "8d29d0fedf994d3c379e53057230f357199d47fd12f7f42c0e6479ae8f6e38b4"
         }
+    },
+    "installer": {
+        "script": [
+            "# 找到下载的安装包",
+            "$installer = Get-ChildItem \"$dir\" -Filter '*.exe' | Select-Object -First 1 -ExpandProperty FullName",
+            "if (!$installer) { error '找不到安装程序'; return }",
+            "",
+            "# 静默安装",
+            "Write-Host '正在安装网易云音乐...'",
+            "Start-Process -FilePath $installer -ArgumentList '/S' -Wait",
+            "",
+            "# 等待安装完成（最多 60 秒）",
+            "$installPath = \"$env:LocalAppData\\Netease\\CloudMusic\\cloudmusic.exe\"",
+            "$timeout = 60; $elapsed = 0",
+            "while (!(Test-Path $installPath) -and $elapsed -lt $timeout) {",
+            "    Start-Sleep -Seconds 2",
+            "    $elapsed += 2",
+            "}",
+            "",
+            "if (!(Test-Path $installPath)) {",
+            "    error '安装超时或失败，请检查安装程序是否支持 /S 参数'",
+            "    return",
+            "}",
+            "",
+            "# 创建 Junction，将 $dir\\app 指向实际安装目录",
+            "$target = \"$env:LocalAppData\\Netease\\CloudMusic\"",
+            "$link   = \"$dir\\app\"",
+            "if (Test-Path $link) { Remove-Item $link -Force -Recurse }",
+            "New-Item -ItemType Junction -Path $link -Target $target -Force | Out-Null",
+            "Write-Host '安装完成'"
+        ]
     },
     "shortcuts": [
         [
@@ -17,48 +47,47 @@
             "网易云音乐"
         ]
     ],
-    "link": "$env:LocalAppData\\Netease\\CloudMusic",
-    "admin": true,
-    "pre_install": [
-        "if (!$bucket) { $bucket = (scoop config).'abgox-abyss-bucket-name' }",
-        ". $bucketsdir\\$bucket\\util\\1.ps1",
-        "A-Start-Install",
-        "A-Install-App -Uninstaller 'app\\UnInstall.exe'"
-    ],
-    "post_install": [
-        "if (!$bucket) { $bucket = (scoop config).'abgox-abyss-bucket-name' }",
-        ". $bucketsdir\\$bucket\\util\\1.ps1",
-        "A-Complete-Install"
-    ],
-    "pre_uninstall": [
-        "if (!$bucket) { $bucket = (scoop config).'abgox-abyss-bucket-name' }",
-        ". $bucketsdir\\$bucket\\util\\1.ps1",
-        "A-Start-Uninstall",
-        "A-Stop-Process",
-        "A-Remove-Link",
-        "A-Uninstall-App"
-    ],
-    "post_uninstall": [
-        "if (!$bucket) { $bucket = (scoop config).'abgox-abyss-bucket-name' }",
-        ". $bucketsdir\\$bucket\\util\\1.ps1",
-        "A-Complete-Uninstall"
-    ],
+    "uninstaller": {
+        "script": [
+            "# 停止进程",
+            "Get-Process -Name 'cloudmusic' -ErrorAction SilentlyContinue | Stop-Process -Force",
+            "Start-Sleep -Seconds 2",
+            "",
+            "# 运行卸载程序",
+            "$uninstaller = \"$dir\\app\\UnInstall.exe\"",
+            "if (Test-Path $uninstaller) {",
+            "    Write-Host '正在卸载网易云音乐...'",
+            "    Start-Process -FilePath $uninstaller -ArgumentList '/S' -Wait",
+            "    Start-Sleep -Seconds 5",
+            "} else {",
+            "    Write-Warning '未找到卸载程序，跳过'",
+            "}",
+            "",
+            "# 移除 Junction（只删除链接，不删除实际目录）",
+            "$link = \"$dir\\app\"",
+            "if (Test-Path $link) {",
+            "    $item = Get-Item $link -ErrorAction SilentlyContinue",
+            "    if ($item.LinkType -eq 'Junction') {",
+            "        $item.Delete()",
+            "    } else {",
+            "        Remove-Item $link -Force -Recurse",
+            "    }",
+            "}",
+            "Write-Host '卸载完成'"
+        ]
+    },
     "checkver": {
         "script": [
-            ". $pwd\\util\\1.ps1",
-            "$res, $out = A-Get-InstallerInfoFromWinget 'NetEase.CloudMusic' 'exe'",
-            "$out"
+            "$release = Invoke-RestMethod 'https://api.winget.run/v2/packages/NetEase.CloudMusic/manifests'",
+            "$latest  = ($release.Data.Versions | Sort-Object { [version]$_ } -Descending) | Select-Object -First 1",
+            "Write-Output $latest"
         ],
-        "regex": "(?:.*ver:(?<version>[^;]+))(?:.*x64:(?<x64>[^;]+))?(?:.*x86:(?<x86>[^;]+))?(?:.*arm64:(?<arm64>[^;]+))?"
+        "regex": "([\\d.]+)"
     },
     "autoupdate": {
         "architecture": {
             "64bit": {
-                "url": "$matchX64",
-                "hash": {
-                    "url": "temp-autoupdate.json",
-                    "jsonpath": "$.x64_machine.InstallerSha256"
-                }
+                "url": "https://d8.music.126.net/dmusic2/NeteaseCloudMusic_Music_official_$version_64.exe"
             }
         }
     }
