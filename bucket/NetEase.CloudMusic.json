@@ -1,0 +1,65 @@
+{
+    "version": "3.1.32.205206",
+    "description": "网易云音乐，网易的一个音乐平台 | A music platform by NetEase",
+    "homepage": "https://music.163.com/",
+    "license": {
+        "identifier": "Freemium"
+    },
+    "architecture": {
+        "64bit": {
+            "url": "https://d8.music.126.net/dmusic2/NeteaseCloudMusic_Music_official_3.1.32.205206_64.exe",
+            "hash": "8d29d0fedf994d3c379e53057230f357199d47fd12f7f42c0e6479ae8f6e38b4"
+        }
+    },
+    "shortcuts": [
+        [
+            "app\\cloudmusic.exe",
+            "网易云音乐"
+        ]
+    ],
+    "link": "$env:LocalAppData\\Netease\\CloudMusic",
+    "admin": true,
+    "pre_install": [
+        "if (!$bucket) { $bucket = (scoop config).'abgox-abyss-bucket-name' }",
+        ". $bucketsdir\\$bucket\\util\\1.ps1",
+        "A-Start-Install",
+        "A-Install-App -Uninstaller 'app\\UnInstall.exe'"
+    ],
+    "post_install": [
+        "if (!$bucket) { $bucket = (scoop config).'abgox-abyss-bucket-name' }",
+        ". $bucketsdir\\$bucket\\util\\1.ps1",
+        "A-Complete-Install"
+    ],
+    "pre_uninstall": [
+        "if (!$bucket) { $bucket = (scoop config).'abgox-abyss-bucket-name' }",
+        ". $bucketsdir\\$bucket\\util\\1.ps1",
+        "A-Start-Uninstall",
+        "A-Stop-Process",
+        "A-Remove-Link",
+        "A-Uninstall-App"
+    ],
+    "post_uninstall": [
+        "if (!$bucket) { $bucket = (scoop config).'abgox-abyss-bucket-name' }",
+        ". $bucketsdir\\$bucket\\util\\1.ps1",
+        "A-Complete-Uninstall"
+    ],
+    "checkver": {
+        "script": [
+            ". $pwd\\util\\1.ps1",
+            "$res, $out = A-Get-InstallerInfoFromWinget 'NetEase.CloudMusic' 'exe'",
+            "$out"
+        ],
+        "regex": "(?:.*ver:(?<version>[^;]+))(?:.*x64:(?<x64>[^;]+))?(?:.*x86:(?<x86>[^;]+))?(?:.*arm64:(?<arm64>[^;]+))?"
+    },
+    "autoupdate": {
+        "architecture": {
+            "64bit": {
+                "url": "$matchX64",
+                "hash": {
+                    "url": "temp-autoupdate.json",
+                    "jsonpath": "$.x64_machine.InstallerSha256"
+                }
+            }
+        }
+    }
+}
