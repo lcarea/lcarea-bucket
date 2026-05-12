@@ -4,8 +4,8 @@
     "license": "Proprietary",
     "version": "2026.4.2",
     "suggest": {
-        "JDK": "sec/openjdk",
-        "crack": "sec/burpsuite_crack"
+        "JDK": "lcarea/openjdk",
+        "crack": "lcarea/burpsuite_crack"
     },
     "url": "https://portswigger-cdn.net/burp/releases/download?product=pro&version=2026.4.2&type=Jar",
     "hash": "",
