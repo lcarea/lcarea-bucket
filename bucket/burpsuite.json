@@ -8,7 +8,7 @@
         "crack": "lcarea/burpsuite_crack"
     },
     "url": "https://portswigger.net/burp/releases/download?product=desktop&version=2026.4.2&type=Jar",
-    "hash": "d603afb255f0194dd34b4f9cf6812bb29dc657b2c34a0a6fcaeb643213419699",
+    "hash": "",
     "pre_install": "Rename-Item \"$dir\\download\" 'burpsuite_pro.jar'",
     "checkver": {
         "url": "https://portswigger.net/burp/releases/data?pageSize=4",
