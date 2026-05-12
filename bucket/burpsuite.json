@@ -1,20 +1,29 @@
 {
-    "version": "2024.10",
-    "description": "The leading toolkit for web security testing.(Scoop bucket by arch3rpro)",
+    "version": "2026.3.1",
+    "description": "Burp Suite 是 PortSwigger 公司开发的集成化 Web 应用安全测试平台，以拦截代理为核心，集成了抓包、扫描、攻击和扩展等功能模块，广泛应用于渗透测试与漏洞挖掘。",
     "homepage": "https://portswigger.net/",
     "license": "Proprietary",
     "notes": [
         "安装后更新会调用本地 manifest.json 内容进行更新",
-        "需要自行注册,方法请参考文件-使用说明.txt"
+        "需要自行注册，方法请参考文件-使用说明.txt"
     ],
-    "url": "https://59-47-239-234.pd1.cjjd19.com/1135-user-share-pay-download-cdn.123295.com/123-42/c6f941f8/1828636409-0/c6f941f82c70a9c4f8bed6403ea1442a/c-m42?v=5&t=1779162465&r=6GTBGW&bzc=2&bzs=313832383633363430393a34333937303031393a313932393234353935383a313832383633363430393a32&ur=anagiigevgvub&urn=0&s=1779162465fcbcca02336e2acaf6b946499df57e5a&bzp=0&bi=243696232&filename=burpsuite.7z&x-mf-biz-cid=1c210d66-68a3-470f-b6df-4de1cf33daf0-08139d&auto_redirect=0&ndcp=1&cache_type=1",
+    "url": "https://github.com/lcarea/lcarea-bucket/releases/download/v1.0.0/burpsuite.7z",
     "hash": "",
     "bin": [
         [
             "CN_Burp.bat",
             "Burpsuite"
         ]
-    ]
+    ],
+    "pre_install": [
+        "$burpDir = Join-Path $dir 'BurpSuite'",
+        "$jar = Join-Path $dir 'burpsuite_pro.jar'",
+        "if (Test-Path $jar) {",
+        "    if (!(Test-Path $burpDir)) { New-Item -ItemType Directory -Path $burpDir | Out-Null }",
+        "    Move-Item -Path $jar -Destination (Join-Path $burpDir 'burpsuite_pro.jar') -Force",
+        "}"
+    ],
+    "autoupdate": {
+        "url": "https://portswigger.net/burp/releases/download?product=pro&type=Jar&version=$version#/burpsuite_pro.jar"
+    }
 }
-
-
