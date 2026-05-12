@@ -8,31 +8,11 @@
         "需要自行注册，方法请参考文件-使用说明.txt"
     ],
     "url": "https://github.com/lcarea/lcarea-bucket/releases/download/v1.0.0/burpsuite.7z",
-    "hash": "2ebb4d68021ff372faacc442b7de215aca664b5842d2900a9e4361f3b7d2608c",
+    "hash": "",
     "bin": [
         [
             "CN_Burp.bat",
             "Burpsuite"
         ]
-    ],
-    "pre_install": [
-        "$burpDir = Join-Path $dir 'BurpSuite'",
-        "$jar = Join-Path $dir 'burpsuite_pro.jar'",
-        "if (Test-Path $jar) {",
-        "    if (!(Test-Path $burpDir)) { New-Item -ItemType Directory -Path $burpDir | Out-Null }",
-        "    Move-Item -Path $jar -Destination (Join-Path $burpDir 'burpsuite_pro.jar') -Force",
-        "}"
-    ],
-    "checkver": {
-        "url": "https://portswigger.net/burp/releases/data?pageSize=4",
-        "jsonpath": "$.ResultSet.Results[0].version"
-    },
-    "autoupdate": {
-        "url": "https://portswigger.net/burp/releases/download?product=pro&type=Jar&version=$version",
-        "hash": {
-            "mode": "json",
-            "url": "https://portswigger.net/burp/releases/data?pageSize=4",
-            "jp": "$.ResultSet.Results.[?(@.releaseChannels[0] == 'Stable' && @.title =~ /Professional.*/)].builds.[?(@.ProductId == 'pro' && @.ProductPlatform == 'Jar')].Md5Checksum"
-        }
-    }
+    ]
 }
