@@ -1,5 +1,5 @@
 {
-    "version": "2026.4.2",
+    "version": "2026.3.3",
     "description": "Burp Suite 是 PortSwigger 公司开发的集成化 Web 应用安全测试平台，以拦截代理为核心，集成了抓包、扫描、攻击和扩展等功能模块，广泛应用于渗透测试与漏洞挖掘。",
     "homepage": "https://portswigger.net/",
     "license": "Proprietary",
@@ -8,7 +8,7 @@
         "需要自行注册，方法请参考文件-使用说明.txt"
     ],
     "url": "https://github.com/lcarea/lcarea-bucket/releases/download/v1.0.0/burpsuite.7z",
-    "hash": "",
+    "hash": "21a8769a4a3d4ebf81379be3f0c8c5386b57ac3b9378b46c20e7c39e5451b0a4",
     "bin": [
         [
             "CN_Burp.bat",
