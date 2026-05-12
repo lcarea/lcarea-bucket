@@ -3,8 +3,8 @@
     "description": "burpsuite_crack",
     "homepage": "https://github.com/bright-angel/burpsuite_crack",
     "suggest": {
-        "JDK": "sec/openjdk",
-        "burpsuite": "sec/burpsuite"
+        "JDK": "lcarea/openjdk",
+        "burpsuite": "lcarea/burpsuite"
     },
     "license": "UNKNOWN",
     "checkver": {
