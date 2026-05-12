@@ -8,7 +8,7 @@
         "需要自行注册，方法请参考文件-使用说明.txt"
     ],
     "url": "https://github.com/lcarea/lcarea-bucket/releases/download/v1.0.0/burpsuite.7z",
-    "hash": "",
+    "hash": "21a8769a4a3d4ebf81379be3f0c8c5386b57ac3b9378b46c20e7c39e5451b0a4",
     "bin": [
         [
             "CN_Burp.bat",
@@ -23,6 +23,10 @@
         "    Move-Item -Path $jar -Destination (Join-Path $burpDir 'burpsuite_pro.jar') -Force",
         "}"
     ],
+    "checkver": {
+        "url": "https://portswigger.net/burp/releases/data?pageSize=4",
+        "jsonpath": "$.ResultSet.Results[0].version"
+    },
     "autoupdate": {
         "url": "https://portswigger.net/burp/releases/download?product=pro&type=Jar&version=$version",
         "hash": {
