@@ -4,8 +4,9 @@
     "homepage": "https://portswigger.net/",
     "license": "Proprietary",
     "notes": [
-        "安装后更新会调用本地 manifest.json 内容进行更新",
-        "需要自行注册，方法请参考文件-使用说明.txt"
+        "需要自行注册，方法请参考文件-使用说明.txt",
+        "burpsuite jar 下载地址：",
+		"https://portswigger.net/burp/releases/download?product=pro&type=Jar&version=$version"
     ],
     "url": "https://github.com/lcarea/lcarea-bucket/releases/download/v1.0.0/burpsuite.7z",
     "hash": "21a8769a4a3d4ebf81379be3f0c8c5386b57ac3b9378b46c20e7c39e5451b0a4",
