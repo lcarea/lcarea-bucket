@@ -1,15 +1,20 @@
 {
-    "description": "The leading toolkit for web security testing.(Scoop bucket by arch3rpro)",
+    "description": "Burp Suite 是 PortSwigger 公司开发的集成化 Web 应用安全测试平台，以拦截代理为核心，集成了抓包、扫描、攻击和扩展等功能模块，广泛应用于渗透测试与漏洞挖掘。",
     "homepage": "https://portswigger.net/",
     "license": "Proprietary",
     "version": "2026.3.3",
-    "suggest": {
-        "JDK": "lcarea/openjdk",
-        "crack": "lcarea/burpsuite_crack"
-    },
     "url": "https://portswigger.net/burp/releases/download?product=pro&type=Jar&version=2026.3.3",
     "hash": "",
-    "pre_install": "Rename-Item \"$dir\\download\" 'burpsuite_pro.jar'",
+    "pre_install": [
+        "New-Item -ItemType Directory -Force \"$dir\\BurpSuite\" | Out-Null",
+        "Move-Item \"$dir\\download\" \"$dir\\BurpSuite\\burpsuite_pro.jar\""
+    ],
+    "bin": [
+        ["BurpSuite\\burpsuite_pro.jar", "burpsuite"]
+    ],
+    "shortcuts": [
+        ["BurpSuite\\burpsuite_pro.jar", "Burp Suite Professional"]
+    ],
     "checkver": {
         "url": "https://portswigger.net/burp/releases/data?pageSize=4",
         "jp": "$.ResultSet.Results.[?(@.releaseChannels[0] == 'Stable' && @.title =~ /Professional.*/)].version"
