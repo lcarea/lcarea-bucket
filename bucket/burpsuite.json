@@ -7,7 +7,7 @@
         "安装后更新会调用本地 manifest.json 内容进行更新",
         "需要自行注册，方法请参考文件-使用说明.txt"
     ],
-    "url": "https://portswigger.net/burp/releases/download?product=pro&type=Jar&version=2026.4.2",
+    "url": "https://github.com/lcarea/lcarea-bucket/releases/download/v1.0.0/burpsuite.7z",
     "hash": "2ebb4d68021ff372faacc442b7de215aca664b5842d2900a9e4361f3b7d2608c",
     "bin": [
         [
