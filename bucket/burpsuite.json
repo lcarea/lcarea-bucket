@@ -12,8 +12,8 @@
     "hash": "sha256:b417574ca33186931c9b476b0bcfa42e930984c95e044c784e5a564f0916b3d3",
     "bin": [
         [
-            "CN_Burp.bat",
-            "Burpsuite"
+            "Burp Suite_CN.bat",
+            "Burp_中文版(无CMD窗口).VBS"
         ]
     ]
 }
