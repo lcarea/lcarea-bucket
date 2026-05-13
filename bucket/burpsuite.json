@@ -9,11 +9,11 @@
 		"https://portswigger.net/burp/releases/download?product=pro&type=Jar&version=$version"
     ],
     "url": "https://github.com/lcarea/lcarea-bucket/releases/download/v1.0.0/burpsuite.7z",
-    "hash": "sha256:b417574ca33186931c9b476b0bcfa42e930984c95e044c784e5a564f0916b3d3",
+    "hash": "sha256:b898859e4672df7137095693072e860a021c123a0ecffceee55252e582397092",
     "bin": [
         [
-            "Burp Suite_CN.bat",
-            "Burp_中文版(无CMD窗口).VBS"
+            "Burp_CN(无CMD窗口).VBS",
+            "Burp_EN(无CMD窗口).VBS"
         ]
     ]
 }
