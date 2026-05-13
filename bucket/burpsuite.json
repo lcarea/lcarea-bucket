@@ -9,7 +9,7 @@
 		"https://portswigger.net/burp/releases/download?product=pro&type=Jar&version=$version"
     ],
     "url": "https://github.com/lcarea/lcarea-bucket/releases/download/v1.0.0/burpsuite.7z",
-    "hash": "21a8769a4a3d4ebf81379be3f0c8c5386b57ac3b9378b46c20e7c39e5451b0a4",
+    "hash": "sha256:b417574ca33186931c9b476b0bcfa42e930984c95e044c784e5a564f0916b3d3",
     "bin": [
         [
             "CN_Burp.bat",
