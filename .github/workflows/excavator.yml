@@ -1,0 +1,30 @@
+name: Excavator
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 每 6 小时自动扫描一次
+    - cron: '0 */6 * * *'
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  excavate:
+    name: Excavate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Excavate
+        uses: ScoopInstaller/Excavator@main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GIT_USER_NAME: lcarea
+          GIT_USER_EMAIL: 762338746@qq.com
