@@ -63,7 +63,7 @@ $apps = @(
     "sec/httpx",
     "sec/nuclei",
     "sec/sqlmap",
-    "sec/TscanPlus",
+    "lcarea/TscanPlus",
     "sec/xray"
 )
 
